@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Farmacia-Comunitaria",
-    "slug": "Farmacia-Comunitaria",
+    "slug": "farmacia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -11,13 +11,15 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/b5f2e6b2-fd29-4852-b8a1-9eb55cd1f89c"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.josepuente.TodoList"
     },
     "android": {
       "versionCode": 1,
@@ -29,8 +31,11 @@
     },
     "extra": {
       "eas": {
-        "projectId": "c3a572a8-d062-4021-a4a4-93cb6605a937"
+        "projectId": "b5f2e6b2-fd29-4852-b8a1-9eb55cd1f89c"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

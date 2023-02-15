@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Button, Text, FlatList, StyleSheet, Alert, RefreshControl } from 'react-native';
+import { View, ScrollView, Button, Text, FlatList, StyleSheet, Alert, RefreshControl, ActivityIndicator } from 'react-native';
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { IconButton, Colors } from 'react-native-paper';
 import db from '../database/Firebase';
@@ -9,6 +9,9 @@ const TaskScreen =  (props) =>{
 
 const [task, setTask] = useState([]);
 const [refreshing, setRefreshing] = useState(false);
+const [search, setSearch] = useState("");
+const [loading, setLoading] = useState(true);
+
 
 
 const getData = async () => {
@@ -33,7 +36,7 @@ querySnapshot.forEach((doc)=>{
 
 const onDeleteTask = (id) => {
 
-Alert.alert("Eliminar Medicamento", "Medicamento Eliminado", [
+Alert.alert("Eliminar Medicamento", "¿Estas seguro que quieres eliminar este medicamento?", [
 
 {
  
@@ -55,6 +58,7 @@ await getData();
 }
 
 
+
 useEffect(() => {
   
 getData();
@@ -62,9 +66,24 @@ getData();
 }, []);
 
 
+if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#9E9E9E" />
+      </View>
+    );
+  }
+
+
 const renderItem = ({item}) =>{
   return(
   <View style={styles.container}>
+    <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar Medicamento"
+          placeholderTextColor="#858585"
+          onChangeText={(text) => text && setSearch(text)}
+        />
     <Text style={styles.titletask}>{item.cantidad}</Text>
     <Text style={styles.titletask}>{item.lote}</Text>
     <Text style={styles.titletask}>{item.medicamento}</Text>
@@ -80,15 +99,6 @@ const renderItem = ({item}) =>{
   )
 }
 
-
-const onRefresh = React.useCallback (async() => {
-  
-  setRefreshing(true);
-  await getData();
-  setRefreshing(false);
-
-}, []);
-
   return(
         <ScrollView>
           <View>
@@ -99,16 +109,21 @@ const onRefresh = React.useCallback (async() => {
             />
           </View>
              <FlatList 
-              data={task}
+              data={task.filter(
+                  (task) =>
+                  task.catidad.toLowerCase().includes(search) ||
+                  task.lote.toLowerCase().includes(search) ||
+                  task.medicamento.toLowerCase().includes(search) ||
+                  task.ubicacion.toLowerCase().includes(search) ||
+                  task.vencimiento.toLowerCase().includes(search)
+                )}
               renderItem={renderItem}
-              refreshcontrol={
-                <RefreshControl
-                  colors={["#51d1f6"]}
-                  onRefresh={onRefresh}
-                  refreshing={refreshing}
-
-                />
-              }
+              refreshing={refreshing}
+              onRefresh={async () => {
+              setRefreshing(true);
+              await getData();
+              setRefreshing(false);
+             }}
            />
         </ScrollView>
 
@@ -126,12 +141,30 @@ alignItems: "center",
 
 },
 
+ loader: {
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
 titletask:{
 
 marginTop: 10,
 
-}
+},
+
+searchInput: {
+    color: "#fff",
+    borderBottomColor: "#4657CE",
+    borderBottomWidth: 1,
+    width: "40%",
+    textAlign: "center",
+    alignItems: "center",
+  },
 
 
 })
